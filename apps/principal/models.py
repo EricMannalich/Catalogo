@@ -54,7 +54,7 @@ class Puntuacion(BaseModel):
         )
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     serie = models.ForeignKey(Serie, on_delete=models.CASCADE)
-    puntuacion = models.CharField(max_length=1, choices=PUNTUACION, blank=True, null=True)
+    puntuacion = models.CharField(max_length=1, choices=PUNTUACION, default = '0')
 
     class Meta:
         verbose_name = 'Puntuación'
@@ -62,3 +62,9 @@ class Puntuacion(BaseModel):
 
     def __str__(self):
         return '%s %s %s' % (self.usuario, self.serie, self.puntuacion)
+
+    def save(self, *args, **kwargs):
+        old_puntuacion = Puntuacion.objects.filter(usuario = self.usuario, serie = self.serie).first()
+        if old_puntuacion:
+            old_puntuacion.delete()
+        return super(Puntuacion, self).save(*args, **kwargs)# llamada al save() original con sus parámetros correspondientes
