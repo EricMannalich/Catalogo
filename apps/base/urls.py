@@ -1,7 +1,7 @@
 from django.urls import path
 
-from apps.base.views import ETL
+from .views import index
 
 urlpatterns = [
-    #path('', ETL, name = 'etl'),
+    path('', index),
 ]
