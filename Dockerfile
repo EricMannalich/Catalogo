@@ -10,7 +10,6 @@ COPY config /code/
 COPY requirements.txt /code/
 COPY core /code/
 COPY manage.py /code/
-COPY db /code/
 
 #Para poder instalar sycopg2 en python:alpine es necesario: 
 #RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
