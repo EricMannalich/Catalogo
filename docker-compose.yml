@@ -7,7 +7,7 @@ x-database-variables: &database-variables
 
 x-app-variables: &app-variables
     <<: *database-variables
-    POSTGRES_HOST: postgres
+    POSTGRES_HOST: postgres-media
     SECRET_KEY: "xuT<llqg<k4xUGHd"
     ALLOWED_HOSTS: "*"
     DEBUG: 0
@@ -20,29 +20,29 @@ x-app-variables: &app-variables
 services:
     postgres:
         image: postgres:13.3
-        container_name: postgres
+        container_name: postgres-media
         environment: *database-variables
         volumes:
             - postgres_data:/var/lib/postgresql/data/
         ports: 
-            - "5431:5430"
+            - "5433:5432"
 
     django: 
-        image: media:latest
-        container_name: django
+        image: media:0.1
+        container_name: django-media
         environment: *app-variables
         volumes: 
             - static:/code/static
             - .:/code
         ports: 
             - "8000:8000"
-        command: bash -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn -c config/gunicorn/conf.py --bind :8000 --chdir mapa_microbiano mapa_microbiano.wsgi:application"
+        command: bash -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn -c config/gunicorn/conf.py --bind :8000 --chdir core core.wsgi:application"
         depends_on:
             - postgres
 
     nginx:
         image: nginx:1.20.0
-        container_name: nginx
+        container_name: nginx-media
         ports:
             - 80:80
             - 443:443
