@@ -10,13 +10,13 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'image')
+        fields = ('id', 'username', 'image' )
     
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        exclude = ('groups','user_permissions',)
     
     def create(self,validated_data):
         user = User(**validated_data)
@@ -33,7 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'email', 'name', 'last_name', 'image')
+        fields = ('username', 'email', 'first_name', 'last_name', 'image')
 
 class UserListSerializer(serializers.ModelSerializer):
     class Meta:

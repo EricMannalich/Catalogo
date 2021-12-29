@@ -1,4 +1,7 @@
-from django.contrib.auth import authenticate
+from datetime import datetime
+
+from django.contrib.auth import authenticate, login
+from django.contrib.sessions.models import Session
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.generics import GenericAPIView
@@ -20,7 +23,7 @@ class UserViewSet(viewsets.GenericViewSet):
 
     def get_queryset(self):
         if self.queryset is None:
-            return self.serializer_class().Meta.model.objects.filter(is_active = True).values('id','username','email','name', 'image')
+            return self.serializer_class().Meta.model.objects.filter(is_active = True).values('id','username','email','first_name', 'image')
         return self.queryset
 
     def list(self, request):
@@ -74,22 +77,42 @@ class Login(TokenObtainPairView):
         )
 
         if user:
-            login_serializer = self.serializer_class(data = request.data)
-            if login_serializer.is_valid():
-                user_serializer = CustomUserSerializer(user)
-                return Response({
-                    'access': login_serializer.validated_data.get('access'),
-                    'refresh': login_serializer.validated_data.get('refresh'),
-                    'user': user_serializer.data,
-                    'message': 'Inicio de sesion exitoso'
-                }, status=status.HTTP_200_OK)
-        return Response({'error': 'Usuario o contraseña incorrectos'}, status=status.HTTP_400_BAD_REQUEST)
+            #sessions = Session.objects.filter(expire_date__gte = datetime.now())
+            #if sessions.exists():
+                #for session in sessions:
+                    #session_data = session.get_decoded()
+                    #if session_data:
+                        #if user.id == int(session_data.get('_auth_user_id')):
+                            #session.delete()
+            if user.is_active:
+                login_serializer = self.serializer_class(data = request.data)
+                if login_serializer.is_valid():
+                    user_serializer = CustomUserSerializer(user)
+                    if not self.request.session.exists(self.request.session.session_key):
+                        login(request, user)
+                    return Response({
+                        'access': login_serializer.validated_data.get('access'),
+                        'refresh': login_serializer.validated_data.get('refresh'),
+                        'user': user_serializer.data,
+                        #'session_key': self.request.session.session_key,
+                        'message': 'Inicio de sesion exitoso'
+                    }, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'Este usuario no puede iniciar sesion'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({'error': 'Usuario o clave incorrectos'}, status=status.HTTP_400_BAD_REQUEST)
 
 class Logout(GenericAPIView):
     def post(self, request, *args, **kwargs):
-        user = User.objects.filter(id = request.user.id)
-        if user.exists():
-            RefreshToken.for_user(user.first())
+        user = User.objects.filter(id = request.user.id).first()
+        if user:
+            RefreshToken.for_user(user)
+            sessions = Session.objects.filter(expire_date__gte = datetime.now())
+            if sessions.exists():
+                for session in sessions:
+                    session_data = session.get_decoded()
+                    if session_data:
+                        if user.id == int(session_data.get('_auth_user_id')):
+                            session.delete()
             return Response({'message': 'Sesion cerrada correctamente'}, status=status.HTTP_200_OK)
         return Response({'error': 'Este usuario no existe'}, status=status.HTTP_400_BAD_REQUEST)
 

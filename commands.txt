@@ -21,11 +21,11 @@ docker pull python:3.9-alpine
 docker-compose run django django-admin startproject core . #Crea una imagen de Docker con un nuevo proyecto en Django dentro de la carpeta core
 docker-compose up #Levanta la imagen de Docker
 docker-compose down #Cierra la imagen de Docker
-docker build --force-rm -t mapa-microbiano:0.3 . #Construye una imajen de Docker
+docker build --force-rm -t media:latest . #Construye una imajen de Docker
 docker images #Lista las imagenes
 docker ps #Lista las imagenes levantadas
-docker exec -it django bash #Conecta con la imagen de Django
-docker exec -it postgres psql -U postgres #Conecta con la imagen de Postgres
+docker exec -it django-media bash #Conecta con la imagen de Django
+docker exec -it postgres-media psql -U postgres #Conecta con la imagen de Postgres
 docker save mapa-microbiano > mapa-microbiano.tar #Salva la imagen de docker offline
 docker save mapa-microbiano -o mapa-microbiano.tar #Salva la imagen de docker offline
 docker load < mapa-microbiano.tar #Carga la imagen de docker offline
