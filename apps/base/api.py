@@ -1,46 +1,46 @@
+from django.contrib.postgres.search import SearchQuery, SearchVector
 from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.base.serializers import *
 
+CANT_MIN_PAGINA = 5
 
-def Paginacion(model,limite = 1,tamanno_pagina = 30):
-    model = model.all()[limite * tamanno_pagina - tamanno_pagina:limite * tamanno_pagina]
+def paginacion(model, pagina = 1, cant_pagina = CANT_MIN_PAGINA):
+    model = model.all()[pagina * cant_pagina - cant_pagina:pagina * cant_pagina]
     return model
 
-def ListPageAPIView(self, request, format=None):
-    pagina = request.GET.get(self.lookup_url_kwarg)
-    if pagina !=None and pagina.isdigit():
-        limite = int(pagina)
+def chek_paginacion_int(pagina, cant_pagina):
+    if pagina:
+        if pagina < 1:
+            pagina = 1
     else:
-        limite = 1
-    model = self.serializer_model.Meta.model.objects.filter(state = True)
-    model = Paginacion(model,limite)
-    data = self.serializer_model(model, many = True).data
-    return Response(data, status = status.HTTP_200_OK)
+        pagina = 1
+    if cant_pagina:
+        if cant_pagina < CANT_MIN_PAGINA:
+            cant_pagina = CANT_MIN_PAGINA
+    else:
+        cant_pagina = CANT_MIN_PAGINA
+    return pagina, cant_pagina
 
-def get_queryset(self):
-    return self.get_serializer().Meta.model.objects.filter(state = True)
-
-def get_nombre_url(self, request, format=None):
-    nombre = request.GET.get(self.lookup_url_kwarg)
-    if nombre != None:
-        model = self.serializer_model.Meta.model.objects.filter(state = True, nombre__icontains = nombre)
-        if model:
-            data = self.serializer_model(model, many = True).data
-            return Response(data, status = status.HTTP_200_OK)
-        return Response({'error': 'No encontrado!'}, status = status.HTTP_400_BAD_REQUEST)
-    model = self.serializer_model().Meta.model.objects.filter(state = True)
-    data = self.serializer_model(model, many = True).data
-    return Response(data, status = status.HTTP_200_OK)
+def chek_paginacion_str(request_pagina, request_cant_pagina):
+    pagina = 1
+    cant_pagina = CANT_MIN_PAGINA
+    if request_pagina:
+        if request_pagina.isdigit():
+            pagina = int(request_pagina)
+    if request_cant_pagina:
+        if request_cant_pagina.isdigit():
+            cant_pagina = int(request_cant_pagina)
+    pagina, cant_pagina = chek_paginacion_int(pagina,cant_pagina)
+    return pagina, cant_pagina
 
 class GeneralViewSet(viewsets.ModelViewSet):
     serializer_class = None
-    lookup_url_kwarg = 'pagina'
 
     def get_queryset(self):
-        return get_queryset(self)
+        return self.get_serializer().Meta.model.objects.filter(state = True)
 
     def destroy(self,request,pk=None):
         model = self.serializer_class().Meta.model.objects.filter(id = pk).first()
@@ -49,55 +49,19 @@ class GeneralViewSet(viewsets.ModelViewSet):
             model.save()
             return Response({'message': 'Eliminado correctamente!'}, status = status.HTTP_200_OK)
         return Response({'error': 'No encontrado!'}, status = status.HTTP_400_BAD_REQUEST)
-        
-class GeneralListApiView(generics.ListAPIView):
+
+class GeneraListPageAPIView(APIView):
     serializer_class = None
-
-    def get_queryset(self):
-        return get_queryset(self)
-
-class GeneralListCreateAPIView(generics.ListCreateAPIView):
-    serializer_class = None
-
-    def get_queryset(self):
-        return get_queryset(self)
-
-class GeneraFilterNamelListAPIView(APIView):
-    serializer_class = NombreSerializer
     serializer_model = None
-    lookup_url_kwarg = 'nombre'
-
-    def get(self, request, format=None):
-        return get_nombre_url(self, request, format=None)
-
-    def post(self,request):
-        serializer = self.serializer_class(data = request.data)
-
-        if serializer.is_valid():
-            nombre = serializer.data.get('nombre')
-            model = self.serializer_model().Meta.model.objects.filter(state = True, nombre__icontains = nombre)
-            if len(model) > 0:
-                data = self.serializer_model(model, many = True).data
-                return Response(data, status = status.HTTP_200_OK)
-            return Response({'error': 'No encontrado!'}, status = status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-
-class GeneralRetrieveAPIView(generics.RetrieveAPIView):
-    serializer_class = None
 
     def get_queryset(self):
-        return get_queryset(self)
+        return self.serializer_model().Meta.model.objects.filter(state = True)
 
-class GeneralRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = None
-    def get_queryset(self):
-        return get_queryset(self)
+    def get_data(self, model):
+        return self.serializer_model(model, many = True).data
 
-    def delete(self, request, pk = None):
-        model = self.get_queryset().filter(id = pk).first()
-        if model:
-            model.state = False
-            model.save()
-            return Response({'message': 'Eliminado correctamente!'}, status = status.HTTP_200_OK)
-        return Response({'error': 'No encontrado!'}, status = status.HTTP_400_BAD_REQUEST)
-
+    def buscar(self, model, entrada):
+        if entrada:
+            if entrada != "null":
+                model = model.annotate(search=SearchVector('nombre', 'sinopsis')).filter(search=SearchQuery(entrada, search_type='websearch'))
+        return model

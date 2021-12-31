@@ -10,7 +10,6 @@ from apps.principal.views import *
 from apps.base.api import *
 from apps.base.serializers import *
 
-
 class GeneroViewSet(GeneralViewSet):
     serializer_class = GeneroSerializer
 
@@ -23,41 +22,37 @@ class EpisodioViewSet(GeneralViewSet):
 class PuntuacionViewSet(GeneralViewSet):
     serializer_class = PuntuacionSerializer
 
-class SerieListApiView(APIView):
+class SerieListApiView(GeneraListPageAPIView):
     serializer_class = BuscarSerializer
     serializer_model = SerieSerializer
 
-    def get_queryset(self):
-        return self.serializer_model().Meta.model.objects.filter(state = True)
-
-    def get_data(self, model):
-        return self.serializer_model(model, many = True).data
-
-    def buscar(self, model, entrada):
-        return model.annotate(search=SearchVector('nombre', 'sinopsis')).filter(search=SearchQuery(entrada, search_type='websearch'))
-
     def get(self, request):
         entrada = request.GET.get('entrada')
+        request_pagina = request.GET.get('pagina')
+        request_cant_pagina = request.GET.get('cant_pagina')
+        pagina, cant_pagina = chek_paginacion_str(request_pagina,request_cant_pagina)
         model = self.get_queryset()
-        if entrada:
-            if entrada != "null":
-                model = self.buscar(model, entrada)
+        model = self.buscar(model, entrada)
         if model:
+            count = model.count()
+            model = paginacion(model, pagina, cant_pagina)
             data = self.get_data(model)
-            return Response(data, status = status.HTTP_200_OK)
+            return Response({'count':count, 'data': data}, status = status.HTTP_200_OK)
         return Response({'error': 'No encontrado!'}, status = status.HTTP_400_BAD_REQUEST)
 
     def post(self,request):
         serializer = self.serializer_class(data = request.data)
-
         if serializer.is_valid():
             entrada = serializer.data.get('entrada')
+            pagina = serializer.data.get('pagina')
+            cant_pagina = serializer.data.get('cant_pagina')
+            pagina, cant_pagina = chek_paginacion_int(pagina,cant_pagina)
             model = self.get_queryset()
-            if entrada:
-                if entrada != "null":
-                    model = self.buscar(model, entrada)
+            model = self.buscar(model, entrada)
             if model:
+                count = model.count()
+                model = paginacion(model, pagina, cant_pagina)
                 data = self.get_data(model)
-                return Response(data, status = status.HTTP_200_OK)
+                return Response({'count':count, 'data': data}, status = status.HTTP_200_OK)
             return Response({'error': 'No encontrado!'}, status = status.HTTP_400_BAD_REQUEST)
         return Response({'error': 'Entrada no valida!'}, status = status.HTTP_400_BAD_REQUEST)
