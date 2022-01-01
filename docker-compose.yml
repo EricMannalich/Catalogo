@@ -10,12 +10,13 @@ x-app-variables: &app-variables
     POSTGRES_HOST: postgres-media
     SECRET_KEY: "xuT<llqg<k4xUGHd"
     ALLOWED_HOSTS: "*"
+    CSRF_TRUSTED_ORIGINS: "https://127.0.0.1"
     DEBUG: 0
     CSRF_COOKIE_SECURE: 1
     SESSION_COOKIE_SECURE: 1
     SECURE_HSTS_SECONDS: 31536000
     SECURE_SSL_REDIRECT: 1
-    CORS_ORIGIN_ALLOW_ALL: 1
+    CORS_ORIGIN_ALLOW_ALL: 0
 
 services:
     postgres:
@@ -28,15 +29,16 @@ services:
             - "5433:5432"
 
     django: 
-        image: media:0.1
+        image: media:0.2
         container_name: django-media
         environment: *app-variables
         volumes: 
             - static:/code/static
             - .:/code
+            - ssl:/etc/ssl
         ports: 
-            - "8000:8000"
-        command: bash -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn -c config/gunicorn/conf.py --bind :8000 --chdir core core.wsgi:application"
+            - "8443:8443"
+        command: bash -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn -c config/gunicorn/conf.py --chdir core core.wsgi:application"
         depends_on:
             - postgres
 
@@ -44,8 +46,8 @@ services:
         image: nginx:1.20.0
         container_name: nginx-media
         ports:
-            - 80:80
-            - 443:443
+            - "80:80"
+            - "443:443"
         volumes:
             - ssl:/etc/ssl
             - ./config/nginx/conf.d:/etc/nginx/conf.d

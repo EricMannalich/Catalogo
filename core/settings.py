@@ -161,6 +161,11 @@ AUTH_USER_MODEL = 'users.User'
 
 CSRF_COOKIE_SECURE = bool(int(os.environ.get('CSRF_COOKIE_SECURE', default="0")))
 
+CSRF_TRUSTED_ORIGINS = []
+CSRF_TRUSTED_ORIGINS_ENV = os.environ.get('CSRF_TRUSTED_ORIGINS')
+if CSRF_TRUSTED_ORIGINS_ENV:
+    CSRF_TRUSTED_ORIGINS.extend(CSRF_TRUSTED_ORIGINS_ENV.split(','))
+
 SESSION_COOKIE_SECURE = bool(int(os.environ.get('SESSION_COOKIE_SECURE', default="0")))
 
 SECURE_HSTS_SECONDS = os.environ.get('SECURE_HSTS_SECONDS', default=0)
@@ -180,9 +185,9 @@ SIMPLE_JWT = {
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/code/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
-MEDIA_ROOT = '/code/static/media/'
+MEDIA_ROOT = os.path.join(os.path.join(BASE_DIR, 'static'), 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

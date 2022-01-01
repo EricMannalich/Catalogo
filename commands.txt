@@ -69,9 +69,9 @@ pdw #Permite salir a la raiz de la imagen
 \l #Lista los encoding de las BD 
 
 #Gunicorn
-gunicorn mapa_microbiano.wsgi:application --bind localhost:8000
-gunicorn -c config/gunicorn/conf.py --bind :8000 --chdir mapa_microbiano mapa_microbiano.wsgi:application
+gunicorn core.wsgi:application --bind localhost:8443
+gunicorn -c config/gunicorn/conf.py --chdir core core.wsgi:application
 
-#Nginx
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt  #Crea los sertificados de seguridad ssl para conexcion segura https://
+#Sertificado ssl
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/selfsigned.key -out /etc/ssl/certs/selfsigned.crt  #Crea los sertificados de seguridad ssl para conexcion segura https://
 openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048 # Crea un grupo Diffie-Hellman fuerte, que se utiliza para negociar Perfect Forward Secrecy con los clientes.
