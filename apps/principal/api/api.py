@@ -35,6 +35,7 @@ class SerieListApiView(GeneraListPageAPIView):
         model = self.get_queryset()
         if genero:
             list_genero = genero.split(",")
+            del list_genero[0]
             if list_genero:
                 model = model.filter(genero__in = list_genero).distinct()
         model = self.buscar(model, entrada)
