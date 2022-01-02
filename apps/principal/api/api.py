@@ -30,8 +30,13 @@ class SerieListApiView(GeneraListPageAPIView):
         entrada = request.GET.get('entrada')
         request_pagina = request.GET.get('pagina')
         request_cant_pagina = request.GET.get('cant_pagina')
+        genero = request.GET.get('genero')
         pagina, cant_pagina = chek_paginacion_str(request_pagina,request_cant_pagina)
         model = self.get_queryset()
+        if genero:
+            list_genero = genero.split(",")
+            if list_genero:
+                model = model.filter(genero__in = list_genero).distinct()
         model = self.buscar(model, entrada)
         if model:
             count = model.count()

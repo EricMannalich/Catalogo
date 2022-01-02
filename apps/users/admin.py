@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.sessions.models import Session
 from apps.users.models import User
-from django.utils.translation import gettext, gettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 class UsuarioAdmin(UserAdmin):
     fieldsets = (

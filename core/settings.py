@@ -62,10 +62,10 @@ INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )#,
-    #'DEFAULT_PERMISSION_CLASSES': (
-    #    'rest_framework.permissions.IsAuthenticated',
-    #)
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
 }
 
 MIDDLEWARE = [
@@ -170,10 +170,24 @@ SESSION_COOKIE_SECURE = bool(int(os.environ.get('SESSION_COOKIE_SECURE', default
 
 SECURE_HSTS_SECONDS = os.environ.get('SECURE_HSTS_SECONDS', default=0)
 
-#SECURE_SSL_REDIRECT = bool(int(os.environ.get('SECURE_SSL_REDIRECT', default="0")))
+SECURE_SSL_REDIRECT = bool(int(os.environ.get('SECURE_SSL_REDIRECT', default="0")))
 
 CORS_ORIGIN_ALLOW_ALL = bool(int(os.environ.get('CORS_ORIGIN_ALLOW_ALL', default="1")))
 
+CORS_ALLOWED_ORIGINS = []
+CORS_ALLOWED_ORIGINS_ENV = os.environ.get('CORS_ALLOWED_ORIGINS')
+if CORS_ALLOWED_ORIGINS_ENV:
+    CORS_ALLOWED_ORIGINS.extend(CORS_ALLOWED_ORIGINS_ENV.split(','))
+
+CORS_ORIGIN_WHITELIST = []
+CORS_ORIGIN_WHITELIST_ENV = os.environ.get('CORS_ORIGIN_WHITELIST')
+if CORS_ORIGIN_WHITELIST_ENV:
+    CORS_ORIGIN_WHITELIST.extend(CORS_ORIGIN_WHITELIST_ENV.split(','))
+
+CORS_ALLOWED_ORIGINS_REGEXE = []
+CORS_ALLOWED_ORIGINS_REGEXE_ENV = os.environ.get('CORS_ALLOWED_ORIGINS_REGEXE')
+if CORS_ALLOWED_ORIGINS_REGEXE_ENV:
+    CORS_ALLOWED_ORIGINS_REGEXE.extend(CORS_ALLOWED_ORIGINS_REGEXE_ENV.split(','))
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
