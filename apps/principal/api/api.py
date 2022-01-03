@@ -31,8 +31,14 @@ class SerieListApiView(GeneraListPageAPIView):
         request_pagina = request.GET.get('pagina')
         request_cant_pagina = request.GET.get('cant_pagina')
         genero = request.GET.get('genero')
+        tansmicion = request.GET.get('tansmicion')
         pagina, cant_pagina = chek_paginacion_str(request_pagina,request_cant_pagina)
         model = self.get_queryset()
+        if tansmicion:
+            if tansmicion == "saliendo":
+                model = model.filter(emision = True)
+            elif tansmicion == "terminado":
+                model = model.filter(emision = False)
         if genero:
             list_genero = genero.split(",")
             del list_genero[0]
