@@ -34,6 +34,7 @@ class SerieListApiView(GeneraListPageAPIView):
         tansmicion = request.GET.get('tansmicion')
         fecha_inicio = request.GET.get('fecha_inicio')
         fecha_fin = request.GET.get('fecha_fin')
+        orden = request.GET.get('orden')
         pagina, cant_pagina = chek_paginacion_str(request_pagina,request_cant_pagina)
         model = self.get_queryset()
         if tansmicion:
@@ -53,6 +54,15 @@ class SerieListApiView(GeneraListPageAPIView):
         model = self.buscar(model, entrada)
         if model:
             count = model.count()
+            if (orden):
+                if (orden == "nombre_ascendente"):
+                    model = model.order_by('nombre')
+                elif (orden == "nombre_descendente"):
+                    model = model.order_by('-nombre')
+                elif (orden == "fecha_ascendente"):
+                    model = model.order_by('fecha_salida')
+                elif (orden == "fecha_descendente"):
+                    model = model.order_by('-fecha_salida')
             model = paginacion(model, pagina, cant_pagina)
             data = self.get_data(model)
             return Response({'count':count, 'data': data}, status = status.HTTP_200_OK)
