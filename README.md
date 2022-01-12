@@ -38,9 +38,9 @@ python manage.py runserver
 
 ## Pasos para ejecutar en modo despliegue:
 
-1. Instalar DOCKER
+1. Instalar DOCKER.
 
-2. Ejecutar DOCKER
+2. Ejecutar DOCKER.
 
 3. Instalar las imagenes de DOCKER:</li> 
 
@@ -56,7 +56,7 @@ docker pull nginx:1.20.0
 docker build --force-rm -t media:0.2
 ```
 
-En caso de que ya tengan las imagenes guardadas localmente sustituyan el paso 3-4, por el 5
+En caso de que ya tengan las imagenes guardadas localmente sustituyan los pasos 3-4, por el 5.
 
 
 5. Cargar las imagenes de docker con los siguientes comandos:
@@ -67,7 +67,7 @@ docker load -i postgres-13.3.tar
 docker load -i nginx-1.20.0.tar
 ```
 
-6. Instalar el pgadmin4
+6. Instalar el pgadmin4.
 
 7. Abrir el archivo `local.conf` en la ruta `.\core\config\nginx\conf.d` y comentar desde la linea 10 hasta la 33.
 
@@ -112,9 +112,9 @@ openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
 *	Username: postgres
 *	Password: postgres
 
-13. Accede al servidor anterior y crea una nueva BD llamada `Media` y carga la salva que está en `bd_backup`
+13. Accede al servidor anterior y crea una nueva BD llamada `Media` y carga la salva que está en `bd_backup`.
 
-14. Deten el contenedor `core` con los botones de la imterfaz. Descomentarea las lineas del paso 6-6.1
+14. Deten el contenedor `core` con los botones de la imterfaz. Descomentarea las lineas de los pasos 7-8.
 
 15. Ejecuta el contenedor `core` con los botones de la imterfaz. Espera a que el icono se ponga de color verde.
 
