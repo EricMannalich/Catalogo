@@ -19,7 +19,7 @@ class SerieAdmin(admin.ModelAdmin):
             'classes' : ('collapse',),
         }),
     )
-    list_display = ("nombre","emision", "fecha_salida", "promedio_puntuaciones", "categoria")
+    list_display = ("nombre","emision", "fecha_salida", "promedio_puntuaciones", "categoria", "image")
     list_display_links = list_display
     search_fields = ("nombre", "sinopsis",)
     list_filter = ("emision", "genero",)

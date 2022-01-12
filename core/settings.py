@@ -59,13 +59,15 @@ THIRD_APPS = [
 
 INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
 
+DEFAULT_PERMISSION_ENV = os.environ.get('DEFAULT_PERMISSION_ENV', default="rest_framework.permissions.AllowAny")
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )#,
-    #'DEFAULT_PERMISSION_CLASSES': (
-    #    'rest_framework.permissions.IsAuthenticated',
-    #)
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        DEFAULT_PERMISSION_ENV,
+    )
 }
 
 MIDDLEWARE = [

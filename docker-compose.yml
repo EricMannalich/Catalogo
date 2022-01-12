@@ -12,6 +12,7 @@ x-app-variables: &app-variables
     ALLOWED_HOSTS: "*"
     CSRF_TRUSTED_ORIGINS: "https://127.0.0.1:443"
     DEBUG: 0
+    DEFAULT_PERMISSION_ENV: "rest_framework.permissions.IsAuthenticated"
     CSRF_COOKIE_SECURE: 1
     SESSION_COOKIE_SECURE: 1
     SECURE_HSTS_SECONDS: 31536000
