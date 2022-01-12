@@ -104,9 +104,9 @@ openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
 *	Name: (cualquiera)
 *	Host name: 127.0.0.1
 *	Port: 5433
-*	Manintenace database postgres
-*	Username postgres
-*	Password postgres
+*	Manintenace database: postgres
+*	Username: postgres
+*	Password: postgres
 
 13. Accede al servidor anterior y crea una nueva BD llamada `Media` y carga la salva que está en `bd_backup`
 
