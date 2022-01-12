@@ -1,6 +1,6 @@
 # Catalogo
 
-#PAsos para ejjecutar en modo desarrollo:
+#Pasos para ejjecutar en modo desarrollo:
 #1-Necesitan Postres 13 y Python 3.9-3.10
 #2-Instalar las dependencias de Python  del archivo requirements.txt
 #3-Crear una BD en postgres con los parámetros:
@@ -17,7 +17,7 @@
 #7-Pueden entrar al panel de administración y crearse su propio usuario o utilizar el comando:
 #  python manage.py createsuperuser
 
-#PAsos para ejjecutar en modo despliegue:
+#Pasos para ejjecutar en modo despliegue:
 #1-Instalar DOCKER
 #2-Ejecutar DOCKER
 #3-Instalar las imagenes de DOCKER:
