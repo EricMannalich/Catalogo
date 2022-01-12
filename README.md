@@ -2,7 +2,7 @@
 
 ## Pasos para ejecutar en modo desarrollo:
 
-1. Necesitan `Postgres 13` y `Python 3.9-3.10`
+1. Necesitan `Postgres 13` y `Python 3.9-3.10`.
 
 2. Instalar las dependencias de Python  del archivo `requirements.txt`. Utilizar el comando:
 
@@ -17,7 +17,7 @@ pip install -r requirements.txt
 *  POSTGRES_PASSWORD = "1qazxsw2"
 *  POSTGRES_HOST ="127.0.0.1"
 
-4. Restauran la BD con la salva que está en `bd_backup`
+4. Restauran la BD con la salva que está en `bd_backup`.
 
 5. Abren CMD en donde está el archivo `manage.py` y ponen el comando:
 
@@ -53,7 +53,7 @@ docker pull nginx:1.20.0
 4.  Abren CMD en donde está el archivo Dockerfile y ponen el comando: 
 
 ```bash
-docker build --force-rm -t media:0.2
+docker build --force-rm -t media:0.2 .
 ```
 
 En caso de que ya tengan las imagenes guardadas localmente sustituyan los pasos 3-4, por el 5.
