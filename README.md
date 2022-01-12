@@ -114,9 +114,9 @@ openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
 
 13. Accede al servidor anterior y crea una nueva BD llamada `Media` y carga la salva que está en `bd_backup`
 
-14. Deten el contenedor core con los botones de la imterfaz. Descomentarea las lineas del paso 6-6.1
+14. Deten el contenedor `core` con los botones de la imterfaz. Descomentarea las lineas del paso 6-6.1
 
-15. Ejecuta el contenedor core con los botones de la imterfaz. Espera a que el icono se ponga de color verde.
+15. Ejecuta el contenedor `core` con los botones de la imterfaz. Espera a que el icono se ponga de color verde.
 
 16. Accede por un navegador a `127.0.0.1`, utiliza las credenciales:
 *	Usuario: Admin
