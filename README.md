@@ -4,7 +4,11 @@
 
 1. Necesitan `Postgres 13` y `Python 3.9-3.10`
 
-2. Instalar las dependencias de Python  del archivo requirements.txt
+2. Instalar las dependencias de Python  del archivo `requirements.txt`. Utilizar el comando:
+
+```bash
+pip install -r requirements.txt
+```
 
 3. Crear una BD en postgres con los parámetros:
 
