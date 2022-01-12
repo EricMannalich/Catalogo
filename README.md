@@ -19,7 +19,7 @@ pip install -r requirements.txt
 
 4. Restauran la BD con la salva que está en `bd_backup`.
 
-5. Abren CMD en donde está el archivo `manage.py` y ponen el comando:
+5. Abren `CMD` en donde está el archivo `manage.py` y ponen el comando:
 
 ```bash
 python manage.py runserver
@@ -50,7 +50,7 @@ docker pull postgres:13.3
 docker pull nginx:1.20.0
 ```
 
-4.  Abren CMD en donde está el archivo Dockerfile y ponen el comando: 
+4.  Abren `CMD` en donde está el archivo `Dockerfile` y ponen el comando: 
 
 ```bash
 docker build --force-rm -t media:0.2 .
