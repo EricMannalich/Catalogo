@@ -33,7 +33,7 @@ class SerieSerializer(serializers.ModelSerializer):
             'fecha_salida': instance.fecha_salida,
             'promedio_puntuaciones': instance.promedio_puntuaciones,
             #'image': instance['image'] if instance['image'] != '' else ''
-            'image': instance.image.url
+            'image': instance.image.url if instance.image else ''
             }
 
 class EpisodioSerializer(serializers.ModelSerializer):
