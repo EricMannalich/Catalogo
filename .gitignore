@@ -11,8 +11,8 @@
 **/env/**
 **/NODE_ENV/**
 **/PYTHON_ENV/**
-**/media/**
-**/bd_backup/**
+#**/media/**
+#**/bd_backup/**
 **/static_files/**
 **/media_files/**
 **/static/**

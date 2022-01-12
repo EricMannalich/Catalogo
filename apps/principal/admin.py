@@ -10,11 +10,9 @@ class SerieAdmin(admin.ModelAdmin):
         }),
         ('Identidad', {
             'fields' : ('nombre','sinopsis','image',),
-            'classes' : ('collapse',),
         }),('Grupos', {
             'fields' : ('categoria','genero',),
             'description' : 'Grupos en común',
-            'classes' : ('collapse',),
         }),('Recomendación', {
             'fields' : ('promedio_puntuaciones',),
             'description' : 'Datos calculados de la interacción con los usuarios',
