@@ -9,7 +9,7 @@ COPY apps /code/
 COPY config /code/
 COPY requirements.txt /code/
 COPY core /code/
-COPY static /code/
+COPY media /code/
 COPY manage.py /code/
 
 #Para poder instalar sycopg2 en python:alpine es necesario: 

@@ -3,6 +3,9 @@ from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
 from django.db import models
 from simple_history.models import HistoricalRecords
 
+def user_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    return 'perfil/user_{0}/{1}'.format(instance.id, filename)
 
 class UserManager(BaseUserManager):
     def _create_user(self, username, email, first_name,last_name, password, is_staff, is_superuser, **extra_fields):
@@ -30,7 +33,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField('Correo Electrónico',max_length = 255, unique = True,)
     first_name = models.CharField('Nombres', max_length = 255, blank = True, null = True)
     last_name = models.CharField('Apellidos', max_length = 255, blank = True, null = True)
-    image = models.ImageField('Imagen de perfil', upload_to='perfil/', max_length=255, null=True, blank = True)
+    image = models.ImageField('Imagen de perfil', upload_to=user_directory_path, max_length=255, null=True, blank = True)
     is_active = models.BooleanField('Está activo', default = True)
     is_staff = models.BooleanField('Es administrativo', default = False)
     historical = HistoricalRecords()

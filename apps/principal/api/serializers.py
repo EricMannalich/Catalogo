@@ -15,20 +15,26 @@ class SerieSerializer(serializers.ModelSerializer):
         model = Serie
         exclude = ('state', 'created_date', 'modified_date', 'deleted_date',)
 
-        def to_representation(self,instance):
-            if instance.emision:
-                emision = 'Saliendo'
-            else:
-                emision = 'Terminada'
-            return {
-                'id': instance.id,
-                'nombre': instance.nombre,
-                'genero': instance.genero.nombre,
-                'sinopsis': instance.sinopsis,
-                'emision': emision,
-                'fecha_salida': instance.fecha_salida,
-                'image': instance['image'] if instance['image'] != '' else ''
-                }
+    def to_representation(self,instance):
+        generos = Genero.objects.filter(serie__id = instance.id).distinct()
+        list_generos = []
+        for genero in generos:
+            list_generos.append(genero.id)
+        if instance.emision:
+            emision = 'Saliendo'
+        else:
+            emision = 'Terminada'
+        return {
+            'id': instance.id,
+            'nombre': instance.nombre,
+            'genero': list_generos,
+            'sinopsis': instance.sinopsis,
+            'emision': emision,
+            'fecha_salida': instance.fecha_salida,
+            'promedio_puntuaciones': instance.promedio_puntuaciones,
+            #'image': instance['image'] if instance['image'] != '' else ''
+            'image': instance.image.url
+            }
 
 class EpisodioSerializer(serializers.ModelSerializer):
 
@@ -36,24 +42,24 @@ class EpisodioSerializer(serializers.ModelSerializer):
         model = Episodio
         exclude = ('state', 'created_date', 'modified_date', 'deleted_date',)
 
-        def to_representation(self,instance):
-            return {
-                'id': instance.id,
-                'serie': instance.serie.nombre,
-                'nombre': instance.nombre,
-                'link': instance.link
-                }
+    def to_representation(self,instance):
+        return {
+            'id': instance.id,
+            'serie': instance.serie.nombre,
+            'nombre': instance.nombre,
+            'link': instance.link
+            }
 
 class PuntuacionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Puntuacion
-        exclude = ('state', 'created_date', 'modified_date', 'deleted_date',)
+        exclude = ('state', 'created_date', 'modified_date', 'deleted_date', )
 
-        def to_representation(self,instance):
-            return {
-                'id': instance.id,
-                'serie': instance.serie.nombre,
-                'usuario': instance.usuario.nombre,
-                'puntuacion': instance.puntuacion
-                }
+    """def to_representation(self,instance):
+        return {
+            'id': instance.id,
+            'serie': instance.serie.id,
+            'usuario': instance.usuario.id,
+            'puntuacion': instance.puntuacion
+            }"""

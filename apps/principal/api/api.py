@@ -22,6 +22,42 @@ class EpisodioViewSet(GeneralViewSet):
 class PuntuacionViewSet(GeneralViewSet):
     serializer_class = PuntuacionSerializer
 
+    def data_url(self, request):
+        model = self.get_queryset()
+        serie = request.GET.get('serie')
+        if serie:
+            if serie.isdigit():
+                id_serie = int(serie)
+                model = model.filter(serie_id = id_serie)
+        usuario = request.GET.get('usuario')
+        if usuario:
+            if usuario.isdigit():
+                id_usuario = int(usuario)
+                model = model.filter(usuario_id = id_usuario)
+        return model
+
+    def list(self, request):
+        model = self.data_url(request)
+        data = self.get_data(model)
+        return Response(data, status = status.HTTP_200_OK)
+
+    def create(self, request):
+        serializer = self.serializer_class(data = request.data)
+        if serializer.is_valid():
+            usuario = request.user.id
+            if not usuario:
+                #usuario = serializer.data.get('usuario')
+                return Response({'error': 'Este usuario no puede cambiar la puntuacion'}, status=status.HTTP_401_UNAUTHORIZED)
+            serie = serializer.data.get('serie')
+            puntuacion = serializer.data.get('puntuacion')
+            #print(usuario,serie, puntuacion)
+            puntuacion_insert = Puntuacion(usuario_id = usuario, serie_id = serie, puntuacion = puntuacion)
+            puntuacion_insert.save()
+            model = self.data_url(request)
+            data = self.get_data(model)
+            return Response(data, status = status.HTTP_200_OK)
+        return Response({'error': 'Datos no validos!'}, status = status.HTTP_400_BAD_REQUEST)
+
 class SerieListApiView(GeneraListPageAPIView):
     serializer_class = BuscarSerializer
     serializer_model = SerieSerializer
@@ -34,6 +70,7 @@ class SerieListApiView(GeneraListPageAPIView):
         tansmicion = request.GET.get('tansmicion')
         fecha_inicio = request.GET.get('fecha_inicio')
         fecha_fin = request.GET.get('fecha_fin')
+        puntuacion = request.GET.get('puntuacion')
         orden = request.GET.get('orden')
         pagina, cant_pagina = chek_paginacion_str(request_pagina,request_cant_pagina)
         model = self.get_queryset()
@@ -42,6 +79,10 @@ class SerieListApiView(GeneraListPageAPIView):
                 model = model.filter(emision = True)
             elif tansmicion == "terminado":
                 model = model.filter(emision = False)
+        if puntuacion:
+            if puntuacion.isdigit():
+                int_puntuacion = int(puntuacion)
+                model = model.filter(promedio_puntuaciones__gte = int_puntuacion)
         if genero:
             list_genero = genero.split(",")
             del list_genero[0]

@@ -39,6 +39,9 @@ def chek_paginacion_str(request_pagina, request_cant_pagina):
 class GeneralViewSet(viewsets.ModelViewSet):
     serializer_class = None
 
+    def get_data(self, model):
+        return self.serializer_class(model, many = True).data
+
     def get_queryset(self):
         return self.get_serializer().Meta.model.objects.filter(state = True)
 

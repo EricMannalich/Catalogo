@@ -4,5 +4,6 @@ from .views import index
 
 urlpatterns = [
     path('', index),
+    path('<int:pk>', index),
     path('Login/', index),
 ]

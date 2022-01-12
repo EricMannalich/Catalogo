@@ -4,9 +4,26 @@ from apps.principal.models import *
 
 # Register your models here.
 class SerieAdmin(admin.ModelAdmin):
-    list_display = ("nombre","emision", "fecha_salida")
+    fieldsets = (
+        ('Control', {
+            'fields' : ('state','emision','fecha_salida',)
+        }),
+        ('Identidad', {
+            'fields' : ('nombre','sinopsis','image',),
+            'classes' : ('collapse',),
+        }),('Grupos', {
+            'fields' : ('categoria','genero',),
+            'description' : 'Grupos en común',
+            'classes' : ('collapse',),
+        }),('Recomendación', {
+            'fields' : ('promedio_puntuaciones',),
+            'description' : 'Datos calculados de la interacción con los usuarios',
+            'classes' : ('collapse',),
+        }),
+    )
+    list_display = ("nombre","emision", "fecha_salida", "promedio_puntuaciones", "categoria")
     list_display_links = list_display
-    search_fields = ("nombre",)
+    search_fields = ("nombre", "sinopsis",)
     list_filter = ("emision", "genero",)
     date_hierarchy = ("fecha_salida")
 
@@ -22,6 +39,7 @@ class PuntuacionAdmin(admin.ModelAdmin):
     list_filter = ("puntuacion",)
 
 admin.site.register(Genero)
+admin.site.register(Categoria)
 admin.site.register(Serie, SerieAdmin)
 admin.site.register(Episodio, EpisodioAdmin)
 admin.site.register(Puntuacion, PuntuacionAdmin)
