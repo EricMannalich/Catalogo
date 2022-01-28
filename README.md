@@ -50,21 +50,19 @@ docker pull postgres:13.3
 docker pull nginx:1.20.0
 ```
 
-4.  Abren `CMD` en donde está el archivo `Dockerfile` y ponen el comando: 
+En caso de que ya tengan las imagenes guardadas localmente sustituyan el paso 3, por el 4.
 
-```bash
-docker build --force-rm -t media:0.2 .
-```
-
-En caso de que ya tengan las imagenes guardadas localmente sustituyan los pasos 3-4, por el 5.
-
-
-5. Cargar las imagenes de docker con los siguientes comandos:
+4. Cargar las imagenes de docker con los siguientes comandos:
 
 ```bash
 docker load -i core-0.2.tar
 docker load -i postgres-13.3.tar
 docker load -i nginx-1.20.0.tar
+```
+5.  Abren `CMD` en donde está el archivo `Dockerfile` y ponen el comando: 
+
+```bash
+docker build --force-rm -t media:0.2 .
 ```
 
 6. Instalar el pgadmin4.
