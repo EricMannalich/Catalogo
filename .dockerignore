@@ -6,3 +6,6 @@ docker-compose.yml
 .git
 .vscode
 commands.txt
+README.md
+bd_backup
+static

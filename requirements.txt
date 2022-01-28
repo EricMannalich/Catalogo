@@ -1,6 +1,5 @@
 django-cors-headers
 django-simple-history
 djangorestframework-simplejwt
-gunicorn
 Pillow
 psycopg2

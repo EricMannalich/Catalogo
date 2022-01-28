@@ -1,7 +1,12 @@
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.db import transaction
+from django.dispatch.dispatcher import receiver
 
 from apps.base.models import BaseModel
 from apps.users.models import User
+
+
 # Create your models here.
 PUNTUACION = (
         ('0', 'Ninguno'),
@@ -15,6 +20,8 @@ PUNTUACION = (
 
 class Genero(BaseModel):
     nombre = models.CharField(max_length=25, unique=True)
+    descripcion = models.TextField(blank=True, null=True)
+    cantidad = models.IntegerField(default = 0)
     
     class Meta:
         verbose_name = 'Género'
@@ -40,10 +47,10 @@ class Serie(BaseModel):
     genero = models.ManyToManyField(Genero)
     sinopsis = models.TextField(blank=True, null=True, db_index=True)
     emision = models.BooleanField(verbose_name="Está saliendo?")
-    fecha_salida = models.DateField(blank=True, null=True)
+    fecha_salida = models.DateField()
     image = models.ImageField('Imagen de portada', upload_to='portada/%Y/%m/%d/', max_length=255, null=True, blank = True)
     promedio_puntuaciones = models.DecimalField(max_digits=2, decimal_places=1, default = 0)
-    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE,db_index=True, blank=True, null=True)
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE,db_index=True, blank=True, null=True, default = 1)
 
     class Meta:
         verbose_name = 'Serie'
@@ -52,6 +59,28 @@ class Serie(BaseModel):
 
     def __str__(self):
         return self.nombre
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        transaction.on_commit(self.update_genero)
+        """generos = Genero.objects.all().distinct()
+        for genero in generos:
+            count = Serie.objects.filter(genero__id = genero.id).count()
+            #print(genero.nombre, count)
+            if count > 0:
+                genero.cantidad = count
+                genero.save()"""
+
+    def delete(self, *args, **kwargs):
+        transaction.on_commit(self.update_genero)
+        pass
+    
+    def update_genero(self):
+        for genero in self.genero.all():
+            count = Serie.objects.filter(genero__id = genero.id).count()
+            genero.cantidad = count
+            genero.save()
+            
 
 class Episodio(BaseModel):
     nombre = models.CharField(max_length=255)
@@ -82,7 +111,7 @@ class Puntuacion(BaseModel):
         old_puntuacion = Puntuacion.objects.filter(usuario = self.usuario, serie = self.serie).first()
         if old_puntuacion:
             old_puntuacion.delete()
-        salida = super(Puntuacion, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         #Guardar el prommedio de las puntuaciones de la serie
         puntuaciones = Puntuacion.objects.filter(serie = self.serie)
         #print(puntuaciones)
@@ -99,5 +128,11 @@ class Puntuacion(BaseModel):
         serie.promedio_puntuaciones = promedio_puntuaciones
         #print(serie)
         serie.save()
-        return salida
-        #return super(Puntuacion, self).save(*args, **kwargs)# llamada al save() original con sus parámetros correspondientes
+
+@receiver(pre_delete, sender=Serie)
+def _serie_delete(sender, instance, **kwargs):
+    generos = Genero.objects.filter(serie__id = instance.id).distinct()
+    for genero in generos:
+        count = Serie.objects.filter(genero__id = genero.id).count() - 1
+        genero.cantidad = count
+        genero.save()

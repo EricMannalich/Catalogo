@@ -3,6 +3,10 @@ from django.contrib import admin
 from apps.principal.models import *
 
 # Register your models here.
+class GeneroAdmin(admin.ModelAdmin):
+    list_display = ("nombre", "cantidad", "descripcion")
+    list_display_links = list_display
+
 class SerieAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Control', {
@@ -36,7 +40,7 @@ class PuntuacionAdmin(admin.ModelAdmin):
     search_fields = ("usuario","serie")
     list_filter = ("puntuacion",)
 
-admin.site.register(Genero)
+admin.site.register(Genero, GeneroAdmin)
 admin.site.register(Categoria)
 admin.site.register(Serie, SerieAdmin)
 admin.site.register(Episodio, EpisodioAdmin)
