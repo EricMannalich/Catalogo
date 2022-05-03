@@ -60,6 +60,13 @@ npm i @babel/plugin-proposal-class-properties
 npm start #arranca el servidor de desarrollo
 npm run build #prepara los archivos para produccion
 npm install axios #instala el paquete axios
+npm install serve --global #Instala un servidor de React
+serve -s build  #Ejecuta el servidor de react en la carpeta build
+
+#workbox
+npm i workbox-cli --global   
+workbox generateSW workbox-config.js #Compacta la configuracion de workbox en buil de react
+workbox injectManifest #Compacta la configuracion de workbox en buil de react
 
 #Postgres
 pdw #Permite salir a la raiz de la imagen
